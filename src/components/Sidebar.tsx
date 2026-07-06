@@ -241,7 +241,7 @@ function Sidebar({
 		const copyAndHelpButtons = (
 			<div className="sidebar-footer-buttons">
 				<button
-					className={`footer-button ${copyState === "copied" ? "copied" : ""}`}
+					className={`footer-button ${copyState === "copied" ? "copied success-delight" : ""}`}
 					onClick={handleCopyUrl}
 					aria-label="Copy URL to clipboard"
 				>
