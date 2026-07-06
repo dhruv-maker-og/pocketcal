@@ -288,6 +288,24 @@ button:focus-visible {
 	outline-offset: 2px;
 }
 
+@keyframes success-delight-pulse {
+	0% {
+		box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+	}
+	70% {
+		box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent);
+	}
+	100% {
+		box-shadow: none;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	button.success-delight {
+		animation: success-delight-pulse var(--dur-mid) var(--ease-out);
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	*,
 	*::before,

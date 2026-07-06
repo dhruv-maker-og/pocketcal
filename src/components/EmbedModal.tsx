@@ -14,6 +14,7 @@ const EmbedModal: React.FC<EmbedModalProps> = ({ onClose }) => {
 	const generateShareableUrl = useStore((state) => state.generateShareableUrl);
 	const eventGroups = useStore((state) => state.eventGroups);
 	const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
+	const [copyErrorSnippet, setCopyErrorSnippet] = useState<string | null>(null);
 	const [shareButtonFormat, setShareButtonFormat] = useState<"markdown" | "html">("markdown");
 
 	const shareableUrl = generateShareableUrl();
@@ -31,10 +32,18 @@ const EmbedModal: React.FC<EmbedModalProps> = ({ onClose }) => {
 	const shareButtonCopyText =
 		shareButtonFormat === "markdown" ? "Copy Markdown" : "Copy HTML";
 
-	const handleCopy = (snippetName: string, text: string) => {
-		navigator.clipboard.writeText(text);
-		setCopiedSnippet(snippetName);
-		setTimeout(() => setCopiedSnippet(null), 2000);
+	const handleCopy = async (snippetName: string, text: string) => {
+		try {
+			await navigator.clipboard.writeText(text);
+			setCopyErrorSnippet(null);
+			setCopiedSnippet(snippetName);
+			setTimeout(() => setCopiedSnippet(null), 2000);
+		} catch (error) {
+			console.error("Failed to copy share snippet", error);
+			setCopiedSnippet(null);
+			setCopyErrorSnippet(snippetName);
+			setTimeout(() => setCopyErrorSnippet(null), 2000);
+		}
 	};
 
 	return (
@@ -68,9 +77,13 @@ const EmbedModal: React.FC<EmbedModalProps> = ({ onClose }) => {
 						{embedCode}
 					</pre>
 					<div className="share-actions">
-						<button onClick={() => handleCopy("embed", embedCode)} className="btn icon-btn">
+						<button onClick={() => handleCopy("embed", embedCode)} className={`btn icon-btn ${copiedSnippet === "embed" ? "success-delight" : ""}`}>
 							<CopyIcon width={16} height={16} color="white" />
-							{copiedSnippet === "embed" ? "Copied!" : "Copy Embed Code"}
+							{copiedSnippet === "embed"
+								? "Copied!"
+								: copyErrorSnippet === "embed"
+								? "Couldn't copy"
+								: "Copy Embed Code"}
 						</button>
 					</div>
 				</section>
@@ -103,9 +116,13 @@ const EmbedModal: React.FC<EmbedModalProps> = ({ onClose }) => {
 						{shareButtonCode}
 					</pre>
 					<div className="share-actions">
-						<button onClick={() => handleCopy(shareButtonSnippetName, shareButtonCode)} className="btn icon-btn">
+						<button onClick={() => handleCopy(shareButtonSnippetName, shareButtonCode)} className={`btn icon-btn ${copiedSnippet === shareButtonSnippetName ? "success-delight" : ""}`}>
 							<CopyIcon width={16} height={16} color="white" />
-							{copiedSnippet === shareButtonSnippetName ? "Copied!" : shareButtonCopyText}
+							{copiedSnippet === shareButtonSnippetName
+								? "Copied!"
+								: copyErrorSnippet === shareButtonSnippetName
+								? "Couldn't copy"
+								: shareButtonCopyText}
 						</button>
 					</div>
 				</section>
