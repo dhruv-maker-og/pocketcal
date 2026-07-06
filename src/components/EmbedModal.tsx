@@ -38,7 +38,8 @@ const EmbedModal: React.FC<EmbedModalProps> = ({ onClose }) => {
 			setCopyErrorSnippet(null);
 			setCopiedSnippet(snippetName);
 			setTimeout(() => setCopiedSnippet(null), 2000);
-		} catch {
+		} catch (error) {
+			console.error("Failed to copy share snippet", error);
 			setCopiedSnippet(null);
 			setCopyErrorSnippet(snippetName);
 			setTimeout(() => setCopyErrorSnippet(null), 2000);
